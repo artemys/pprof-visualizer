@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Drag and Drop File Upload</title>
+    <meta charset="UTF-8">
+    <script>
+        function dropHandler(ev) {
+            console.log("File(s) dropped");
+
+            // Prevent default behavior (Prevent file from being opened)
+            ev.preventDefault();
+
+            if (ev.dataTransfer.items) {
+                // Use DataTransferItemList interface to access the file(s)
+                [...ev.dataTransfer.items].forEach((item, i) => {
+                    // If dropped items aren't files, reject them
+                    if (item.kind === "file") {
+                        const file = item.getAsFile();
+                        console.log(`… file[${i}].name = ${file.name}`);
+                        // let fileData = ev.target.result;
+                        //
+                        // let data = {file: fileData};
+                        // let jsonData = JSON.stringify(data);
+
+                        let formData = new FormData();
+                        formData.append('file', file);
+
+                        let xhr = new XMLHttpRequest();
+                        xhr.open('POST', '/visualize');
+                        xhr.onload = function() {
+                            if (xhr.status === 200) {
+                                console.log(xhr.responseText);
+                            } else {
+                                console.log('Request failed.  Returned status of ' + xhr.status);
+                            }
+                        };
+                        xhr.send(formData);
+                    }
+                });
+            } else {
+                // Use DataTransfer interface to access the file(s)
+                [...ev.dataTransfer.files].forEach((file, i) => {
+                    console.log(`… file[${i}].name = ${file.name}`);
+                });
+            }
+        }
+
+        function dragOverHandler(ev) {
+            console.log("File(s) in drop zone");
+
+            // Prevent default behavior (Prevent file from being opened)
+            ev.preventDefault();
+        }
+
+    </script>
+</html>
+<style>
+    #drop_zone {
+        border: 2px dashed #bbb;
+        color: #bbb;
+        padding: 20px;
+        text-align: center;
+        font-size: 20px;
+        height: 200px;
+        width: 400px;
+        margin: 50px auto;
+    }
+
+</style>
+</head>
+<body>
+<div id="drop_zone" ondrop="dropHandler(event);"
+     ondragover="dragOverHandler(event);">
+    <p>Drag one or more files to this <i>drop zone</i>.</p>
+</div>
+</body>
+</html>
