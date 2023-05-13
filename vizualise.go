@@ -45,8 +45,8 @@ func Visualize(w http.ResponseWriter, r *http.Request) {
 	}
 	p, _ := NewProfile(&profile, "")
 	ftree := p.BuildTree("tree", true, "")
-	fmt.Println(ftree.root.value)
-	// Encodage de la réponse JSON
+	fmt.Println(ftree)
+
 	response := Result{1}
 	jsonData, err := json.Marshal(response)
 	if err != nil {
@@ -54,7 +54,6 @@ func Visualize(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Envoi de la réponse JSON
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(jsonData)
 }
