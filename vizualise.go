@@ -23,7 +23,6 @@ func Visualize(w http.ResponseWriter, r *http.Request) {
 	}
 	defer file.Close()
 
-	// Décompression du fichier "pprof.pb.gz"
 	gzipReader, err := gzip.NewReader(file)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -45,9 +44,9 @@ func Visualize(w http.ResponseWriter, r *http.Request) {
 	}
 	p, _ := NewProfile(&profile, "")
 	ftree := p.BuildTree("tree", true, "")
-	fmt.Println(ftree)
+	fmt.Println(ftree.root)
 
-	response := Result{1}
+	response := ftree
 	jsonData, err := json.Marshal(response)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
