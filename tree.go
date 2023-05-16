@@ -113,30 +113,43 @@ func (n *TreeNode) sort() {
 	}
 }
 
-func (t *FunctionsTree) toHtml() string {
-	var b bytes.Buffer
-	b.WriteString("<div>")
-	b.WriteString(fmt.Sprintf("<p>%s</p>", t.Name))
-	b.WriteString("<ul>")
-	b.WriteString(t.Root.toHtml())
-	b.WriteString("</ul>")
-	b.WriteString("</div>")
-	return b.String()
-}
-func (t *TreeNode) toHtml() string {
-	var b bytes.Buffer
-	b.WriteString("<li>")
-	var buf bytes.Buffer
-	tmpl, _ := template.New("tree").Parse(TreeNodeTemplate)
-	tmpl.Execute(&buf, t)
-	b.WriteString(buf.String())
-	if t.Children != nil && len(t.Children) > 0 {
-		b.WriteString("<ul>")
-		for _, child := range t.Children {
-			b.WriteString(child.toHtml())
-		}
-		b.WriteString("</ul>")
+//func (t *FunctionsTree) toHtml() string {
+//	var b bytes.Buffer
+//	b.WriteString("<div>")
+//	b.WriteString(fmt.Sprintf("<p>%s</p>", t.Name))
+//	b.WriteString("<ul>")
+//	b.WriteString(t.Root.toHtml())
+//	b.WriteString("</ul>")
+//	b.WriteString("</div>")
+//	return b.String()
+//}
+//func (t *TreeNode) toHtml() string {
+//	var b bytes.Buffer
+//	b.WriteString("<li>")
+//	var buf bytes.Buffer
+//	tmpl, _ := template.New("tree").Parse(TreeNodeTemplate)
+//	tmpl.Execute(&buf, t)
+//	b.WriteString(buf.String())
+//	if t.Children != nil && len(t.Children) > 0 {
+//		b.WriteString("<ul>")
+//		for _, child := range t.Children {
+//			b.WriteString(child.toHtml())
+//		}
+//		b.WriteString("</ul>")
+//	}
+//	b.WriteString("</li>")
+//	return b.String()
+//}
+
+func toHtml(t *FunctionsTree) string {
+	tmpl, err := template.New("tree").Parse(TreeNodeTemplate)
+	if err != nil {
+		panic(err)
 	}
-	b.WriteString("</li>")
-	return b.String()
+	var buf bytes.Buffer
+	err = tmpl.Execute(&buf, t)
+	if err != nil {
+		panic(err)
+	}
+	return buf.String()
 }

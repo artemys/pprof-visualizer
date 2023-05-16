@@ -44,16 +44,10 @@ func Visualize(w http.ResponseWriter, r *http.Request) {
 	}
 	p, _ := NewProfile(&profile, "")
 	ftree := p.BuildTree("tree", true, "")
-	fmt.Println(ftree.Root)
 
-	//jsonData, err := json.Marshal(ftree.Root)
-	//if err != nil {
-	//	http.Error(w, err.Error(), http.StatusInternalServerError)
-	//	return
-	//}
-
-	ftree.toHtml()
+	html := toHtml(ftree)
 	w.Header().Set("Content-Type", "text/html")
+	fmt.Fprint(w, html)
 }
 
 func readProtoFile(filename string) (*pprof.Profile, error) {
