@@ -103,7 +103,7 @@ func readProfile(p *pprof.Profile, stringsMap StringsMap, functionsMapByLocation
 			sample.Value = value
 		}
 
-		// compute the self time for the leaf
+		// compute the Self time for the leaf
 		leaf := sample.Functions[len(sample.Functions)-1]
 		leaf.Self += value
 		sample.Functions[len(sample.Functions)-1] = leaf
@@ -141,7 +141,7 @@ func (p *Profile) BuildTree(treeName string, aggregateByFunction bool, searchFie
 
 	// fill the tree
 	for _, s := range p.Samples {
-		node := tree.root
+		node := tree.Root
 		for _, f := range s.Functions {
 			if s.Value == 0 {
 				continue
@@ -150,8 +150,8 @@ func (p *Profile) BuildTree(treeName string, aggregateByFunction bool, searchFie
 		}
 	}
 
-	if tree.root != nil {
-		tree.root.filter(searchField)
+	if tree.Root != nil {
+		tree.Root.filter(searchField)
 	}
 
 	tree.sort()

@@ -35,17 +35,10 @@
 
         async function getTree(formData) {
             try {
-                const response = await fetch('/visualize', {
+                await fetch('/visualize', {
                     method: 'POST',
-                    body: formData
+                    body: formData,
                 });
-
-                if (response.ok) {
-                    const json = await response.json();
-                    console.log(json);
-                } else {
-                    console.log('La requête a échoué. Statut : ' + response.status);
-                }
             } catch (error) {
                 console.error('Erreur :', error);
             }
@@ -72,5 +65,10 @@
      ondragover="dragOverHandler(event);">
     <p>Drag one or more files to this <i>drop zone</i>.</p>
 </div>
+{{define "base"}}
+<html>
+<body>{{template "body" .}}</body>
+</html>
+{{end}}
 </body>
 </html>

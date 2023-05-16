@@ -20,10 +20,10 @@ type Location struct {
 }
 
 type Function struct {
-	Name       string
-	File       string
-	LineNumber uint64
-	Self       int64
+	Name       string `json:"name"`
+	File       string `json:"file"`
+	LineNumber uint64 `json:"lineNumber"`
+	Self       int64  `json:"self"`
 }
 
 func (f Function) String(lineNumber bool) string {

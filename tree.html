@@ -1,0 +1,9 @@
+<h1>{{.PprofTree}}</h1>
+<ul>
+    {{range .Children}}
+    <li class="functionName">{{.Function.Name}}</li>
+    <li class="self">{{.Self}}</li>
+    <li class="value">{{.Value}}</li>
+    <li class="percent">{{.Percent}}</li>
+    {{end}}
+</ul>
