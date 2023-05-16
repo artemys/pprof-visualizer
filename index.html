@@ -34,41 +34,42 @@
         }
 
         async function getTree(formData) {
-            try {
-                await fetch('/visualize', {
-                    method: 'POST',
-                    body: formData,
-                });
-            } catch (error) {
-                console.error('Erreur :', error);
-            }
+            fetch('/visualize', {
+                method: 'POST',
+                body: formData,
+            }).then(function (response) {
+                return response.text();
+            }).then(function (html) {
+                document.getElementById("tree").innerHTML = html;
+                console.log(html);
+            }).catch(function (err) {
+                // There was an error
+                console.warn('Something went wrong.', err);
+            });
         }
 
     </script>
-</html>
-<style>
-    #drop_zone {
-        border: 2px dashed #bbb;
-        color: #bbb;
-        padding: 20px;
-        text-align: center;
-        font-size: 20px;
-        height: 200px;
-        width: 400px;
-        margin: 50px auto;
-    }
+    <style>
+        #drop_zone {
+            border: 2px dashed #bbb;
+            color: #bbb;
+            padding: 20px;
+            text-align: center;
+            font-size: 20px;
+            height: 200px;
+            width: 400px;
+            margin: 50px auto;
+        }
 
-</style>
+    </style>
 </head>
 <body>
 <div id="drop_zone" ondrop="dropHandler(event);"
      ondragover="dragOverHandler(event);">
     <p>Drag one or more files to this <i>drop zone</i>.</p>
 </div>
-{{define "base"}}
-<html>
-<body>{{template "body" .}}</body>
-</html>
-{{end}}
+<div id="tree">
+
+</div>
 </body>
 </html>

@@ -5,7 +5,6 @@ import (
 	"example.com/pprof-visualizer/pprof"
 	"fmt"
 	"github.com/gogo/protobuf/proto"
-	"html/template"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -45,20 +44,16 @@ func Visualize(w http.ResponseWriter, r *http.Request) {
 	}
 	p, _ := NewProfile(&profile, "")
 	ftree := p.BuildTree("tree", true, "")
-	//fmt.Println(ftree.Root)
-	//
+	fmt.Println(ftree.Root)
+
 	//jsonData, err := json.Marshal(ftree.Root)
 	//if err != nil {
 	//	http.Error(w, err.Error(), http.StatusInternalServerError)
 	//	return
 	//}
-	tmpl := make(map[string]*template.Template)
-	tmpl["index.html"] = template.Must(template.ParseFiles("index.html", "base.html"))
-	tmpl := template.Must(template.ParseFiles("tree.html"))
-	tmpl["tree.html"].Execute(w, "base", ftree)
 
-	//w.Header().Set("Content-Type", "application/json")
-	//w.Write(jsonData)
+	ftree.toHtml()
+	w.Header().Set("Content-Type", "text/html")
 }
 
 func readProtoFile(filename string) (*pprof.Profile, error) {

@@ -1,9 +1,5 @@
-<h1>{{.PprofTree}}</h1>
-<ul>
-    {{range .Children}}
-    <li class="functionName">{{.Function.Name}}</li>
-    <li class="self">{{.Self}}</li>
-    <li class="value">{{.Value}}</li>
-    <li class="percent">{{.Percent}}</li>
-    {{end}}
-</ul>
+<function>{{.Function.Name}} - {{.Function.File}} - {{.Function.LineNumber}} - {{.Function.Self}}</function>
+<self>{{.Self}}</self>
+<value>{{.Value}}</value>
+<percent>{{.Percent}}</percent>
+<visible>{{.Visible}}</visible>
