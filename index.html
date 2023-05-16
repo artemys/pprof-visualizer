@@ -40,20 +40,24 @@
                     body: formData,
                 });
                 document.body.innerHTML = await response.text();
+                toggleCaret();
             } catch (err) {
                 console.warn('Something went wrong.', err);
             }
         }
 
-        let toggler = document.getElementById(".caret");
-        let i;
-        for (i = 0; i < toggler.length; i++) {
-            toggler[i].addEventListener("click", function () {
-                console.log("coucou")
-                this.parentElement.querySelector(".nested").classList.toggle("active");
-                this.classList.toggle("caret-down");
-            });
+        function toggleCaret() {
+            var toggler = document.getElementsByClassName("caret");
+            var i;
+
+            for (i = 0; i < toggler.length; i++) {
+                toggler[i].addEventListener("click", function () {
+                    this.parentElement.querySelector(".nested").classList.toggle("active");
+                    this.classList.toggle("caret-down");
+                });
+            }
         }
+
     </script>
     <style>
         #drop_zone {
@@ -106,9 +110,6 @@
 <div id="drop_zone" ondrop="dropHandler(event);"
      ondragover="dragOverHandler(event);">
     <p>Drag one or more files to this <i>drop zone</i>.</p>
-</div>
-<div id="tree">
-
 </div>
 </body>
 </html>
