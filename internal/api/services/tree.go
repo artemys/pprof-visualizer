@@ -1,16 +1,11 @@
-package main
+package services
 
 import (
-	"bytes"
 	_ "embed"
 	"fmt"
-	"html/template"
 	"sort"
 	"strings"
 )
-
-//go:embed tree.html
-var TreeNodeTemplate string
 
 type FunctionsTree struct {
 	Name string    `json:"name"`
@@ -111,45 +106,4 @@ func (n *TreeNode) sort() {
 	for _, child := range n.Children {
 		child.sort()
 	}
-}
-
-//func (t *FunctionsTree) toHtml() string {
-//	var b bytes.Buffer
-//	b.WriteString("<div>")
-//	b.WriteString(fmt.Sprintf("<p>%s</p>", t.Name))
-//	b.WriteString("<ul>")
-//	b.WriteString(t.Root.toHtml())
-//	b.WriteString("</ul>")
-//	b.WriteString("</div>")
-//	return b.String()
-//}
-//func (t *TreeNode) toHtml() string {
-//	var b bytes.Buffer
-//	b.WriteString("<li>")
-//	var buf bytes.Buffer
-//	tmpl, _ := template.New("tree").Parse(TreeNodeTemplate)
-//	tmpl.Execute(&buf, t)
-//	b.WriteString(buf.String())
-//	if t.Children != nil && len(t.Children) > 0 {
-//		b.WriteString("<ul>")
-//		for _, child := range t.Children {
-//			b.WriteString(child.toHtml())
-//		}
-//		b.WriteString("</ul>")
-//	}
-//	b.WriteString("</li>")
-//	return b.String()
-//}
-
-func toHtml(t *FunctionsTree) string {
-	tmpl, err := template.New("tree").Parse(TreeNodeTemplate)
-	if err != nil {
-		panic(err)
-	}
-	var buf bytes.Buffer
-	err = tmpl.Execute(&buf, t)
-	if err != nil {
-		panic(err)
-	}
-	return buf.String()
 }

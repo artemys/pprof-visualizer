@@ -1,8 +1,8 @@
-package main
+package services
 
 import (
-	"example.com/pprof-visualizer/pprof"
 	"fmt"
+	"github.com/artemys/pprof-visualizer/internal/pkg/pprof"
 	"os"
 	"time"
 )

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Drag and Drop File Upload</title>
+    <meta charset="UTF-8">
+    <style>
+        #content {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            justify-content: left;
+        }
+
+        aside {
+            width: 25vw;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+
+        #drop_zone {
+            border: 2px dashed #bbb;
+            color: #bbb;
+            padding: 20px;
+            text-align: center;
+            font-size: 20px;
+            height: 200px;
+            width: 400px;
+            margin: 50px auto;
+        }
+
+        ul, #myUL {
+            list-style-type: none;
+        }
+
+        #myUL {
+            margin: 0;
+            padding: 0;
+        }
+
+        .caret {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .caret::before {
+            content: "\25B6";
+            color: black;
+            display: inline-block;
+            margin-right: 6px;
+        }
+
+        .caret-down::before {
+            transform: rotate(90deg);
+        }
+
+        .nested {
+            display: none;
+        }
+
+        .active {
+            display: block;
+        }
+
+
+
+    </style>
+</head>
+<body>
+<div id="content">
+    <aside>
+        <div id="drop_zone" ondrop="dropHandler(event);"
+             ondragover="dragOverHandler(event);">
+            <p>Drag one or more files to this <i>drop zone</i>.</p>
+        </div>
+    </aside>
+    <div id="visualization"></div>
+</div>
+
+<script>
+    function dropHandler(ev) {
+        console.log("File(s) dropped");
+
+        ev.preventDefault();
+
+        if (ev.dataTransfer.items) {
+            [...ev.dataTransfer.items].forEach((item, i) => {
+                if (item.kind === "file") {
+                    const file = item.getAsFile();
+                    //DEBUG
+                    console.log(`… file[${i}].name = ${file.name}`);
+                    let formData = new FormData();
+                    formData.append('file', file);
+                    getTree(formData)
+                }
+            });
+        } else {
+            [...ev.dataTransfer.files].forEach((file, i) => {
+                console.log(`… file[${i}].name = ${file.name}`);
+
+            });
+        }
+    }
+
+    function dragOverHandler(ev) {
+        console.log("File(s) in drop zone");
+        ev.preventDefault();
+    }
+
+    async function getTree(formData) {
+        fetch('/visualize', {
+            method: 'POST',
+            body: formData,
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Erreur HTTP " + response.status);
+                }
+                return response.text();
+            })
+            .then(data => {
+                // Traitez les données de la réponse ici
+                // Traitez les données de la réponse ici
+                console.log(data);
+
+                let tree = document.getElementById("visualization")
+                tree.innerHTML = data;
+                // Binding des click post insert in DOM
+                let toggler = document.getElementsByClassName("caret");
+                console.log(toggler)
+                let i;
+                for (i = 0; i < toggler.length; i++) {
+                    toggler[i].addEventListener("click", function () {
+                        console.log("coucou")
+                        this.parentElement.querySelector(".nested").classList.toggle("active");
+                        this.classList.toggle("caret-down");
+                    });
+                }
+            })
+            .catch(error => {
+                // Gérez les erreurs ici
+                console.error(error);
+            });
+    }
+</script>
+</body>
+</html>

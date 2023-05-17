@@ -1,13 +1,11 @@
-package main
+package services
 
 import (
 	"compress/gzip"
-	"example.com/pprof-visualizer/pprof"
 	"fmt"
+	"github.com/artemys/pprof-visualizer/internal/pkg/pprof"
 	"github.com/gogo/protobuf/proto"
-	"io"
 	"io/ioutil"
-	"net/http"
 	"os"
 )
 
@@ -15,39 +13,10 @@ type Result struct {
 	TotalAllocBytes int64 `json:"total_alloc_bytes"`
 }
 
-func Visualize(w http.ResponseWriter, r *http.Request) {
-	file, _, err := r.FormFile("file")
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-	defer file.Close()
-
-	gzipReader, err := gzip.NewReader(file)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-	defer gzipReader.Close()
-
-	// Lecture du contenu décompressé du fichier "pprof.pb"
-	data, err := io.ReadAll(gzipReader)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	var profile pprof.Profile
-	if err := proto.Unmarshal(data, &profile); err != nil {
-		fmt.Println("error reading file")
-		return
-	}
+func Visualize(profile pprof.Profile) *FunctionsTree {
 	p, _ := NewProfile(&profile, "")
 	ftree := p.BuildTree("tree", true, "")
-
-	html := toHtml(ftree)
-	w.Header().Set("Content-Type", "text/html")
-	fmt.Fprint(w, html)
+	return ftree
 }
 
 func readProtoFile(filename string) (*pprof.Profile, error) {
