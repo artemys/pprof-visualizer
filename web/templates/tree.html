@@ -1,0 +1,24 @@
+<div>
+    {{ define "treenode" }}
+    <li>
+        <span class="caret">{{.Function.Name}} - {{.Function.File}} - {{.Function.LineNumber}} - {{.Function.Self}}</span>
+        <div>
+            <self>{{.Self}}</self>
+            <value>{{.Value}}</value>
+            <percent>{{.Percent}}</percent>
+            <visible>{{.Visible}}</visible>
+        </div>
+        {{ if .Children }}
+        <ul class="nested">
+            {{ range .Children }}
+            {{ template "treenode" . }}
+            {{end}}
+        </ul>
+        {{ end }}
+    </li>
+    {{ end }}
+    <p id="myUL">{{.Name}}</p>
+    <ul>
+        {{ template "treenode" .Root }}
+    </ul>
+</div>

@@ -1,22 +1,17 @@
 package main
 
 import (
-	"fmt"
-	"html/template"
-	"net/http"
+	"github.com/artemys/pprof-visualizer/cmd/api"
+	"github.com/spf13/cobra"
 )
 
-func main() {
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		tmpl := template.Must(template.ParseFiles("index.html"))
-		if err := tmpl.Execute(w, nil); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
-	})
-	http.HandleFunc("/visualize", Visualize)
+var rootCmd *cobra.Command
 
-	fmt.Println("Listening on http://localhost:8080")
-	if err := http.ListenAndServe(":8080", nil); err != nil {
-		panic(err)
-	}
+func init() {
+	rootCmd = &cobra.Command{Use: "pprof-visualizer"}
+	rootCmd.AddCommand(api.Start())
+}
+
+func main() {
+	cobra.CheckErr(rootCmd.Execute())
 }
