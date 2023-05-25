@@ -1,12 +1,10 @@
 package services
 
 import (
-	"compress/gzip"
 	"fmt"
 	"github.com/artemys/pprof-visualizer/internal/pkg/pprof"
-	"github.com/gogo/protobuf/proto"
-	"io/ioutil"
-	"os"
+	"path"
+	"time"
 )
 
 type Result struct {
@@ -19,26 +17,20 @@ func Visualize(profile pprof.Profile) *FunctionsTree {
 	return ftree
 }
 
-func readProtoFile(filename string) (*pprof.Profile, error) {
-	f, err := os.Open(filename)
-	if err != nil {
-		return nil, fmt.Errorf("readProtoFile: os.Open: %v", err)
-	}
+func (p *Profile) texts(node *TreeNode) (value string, self string, tooltip string, lineText string) {
+	if p.Type == "cpu" {
+		value = time.Duration(node.Value).String()
+		self = time.Duration(node.Self).String()
+		tooltip = fmt.Sprintf("%s of %s\nself: %s", value, time.Duration(p.TotalSampling).String(), self)
+	} else {
 
-	g, err := gzip.NewReader(f)
-	if err != nil {
-		return nil, fmt.Errorf("readProtoFile: gzip.NewReader: %v", err)
+		value = humanize.IBytes(uint64(node.Value))
+		self = humanize.IBytes(uint64(node.Self))
+		tooltip = fmt.Sprintf("%s of %s\nself: %s", value, humanize.IBytes(p.TotalSampling), self)
 	}
-
-	data, err := ioutil.ReadAll(g)
-	if err != nil {
-		return nil, fmt.Errorf("readProtoFile: ioutil.ReadAll: %v", err)
+	lineText = fmt.Sprintf("%s %s:%d - %s - self: %s", node.function.Name, path.Base(node.function.File), node.function.LineNumber, value, self)
+	if p.aggregateByFunction {
+		lineText = fmt.Sprintf("%s %s - %s - self: %s", node.function.Name, path.Base(node.function.File), value, self)
 	}
-
-	var profile pprof.Profile
-	if err := proto.Unmarshal(data, &profile); err != nil {
-		return nil, fmt.Errorf("readProtoFile: proto.Unmarshal: %v", err)
-	}
-
-	return &profile, nil
+	return value, self, tooltip, lineText
 }
