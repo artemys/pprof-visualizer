@@ -29,6 +29,7 @@ type Profile struct {
 	functionsMapByLocation ManyFunctionsMap
 	locationsMap           LocationsMap
 	stringsMap             StringsMap
+	aggregateByFunction    bool
 }
 
 func NewProfile(p *pprof.Profile, mode sampleMode) (*Profile, error) {
@@ -215,16 +216,4 @@ func buildStringsTable(profile *pprof.Profile) StringsMap {
 		rv[uint64(i)] = v
 	}
 	return rv
-}
-
-func buildUsedMemory() {
-	var text string
-	switch mode {
-	case ModeCpu:
-		text = fmt.Sprintf("%s - total sampling duration: %s - total capture duration %s", tree.name, time.Duration(g.profile.TotalSampling).String(), g.profile.CaptureDuration.String())
-	case ModeHeapAlloc:
-		text = fmt.Sprintf("%s - total allocated memory: %s", tree.name, humanize.IBytes(g.profile.TotalSampling))
-	case ModeHeapInuse:
-		text = fmt.Sprintf("%s - total in-use memory: %s", tree.name, humanize.IBytes(g.profile.TotalSampling))
-	}
 }

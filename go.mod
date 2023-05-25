@@ -1,14 +1,15 @@
 module github.com/artemys/pprof-visualizer
 
-go 1.20
+go 1.19
 
 require (
+	github.com/dustin/go-humanize v1.0.1
 	github.com/gin-gonic/gin v1.9.0
 	github.com/gogo/protobuf v1.3.2
 	github.com/golang/protobuf v1.5.3
 	github.com/spf13/cobra v1.7.0
 	github.com/spf13/viper v1.15.0
-	go.uber.org/zap v1.21.0
+	go.uber.org/zap v1.24.0
 )
 
 require (

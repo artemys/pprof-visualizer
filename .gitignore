@@ -2,4 +2,4 @@
 .env
 pprof-visualizer.iml
 go.sum
-go.mod
+go.mod/

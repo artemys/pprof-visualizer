@@ -3,6 +3,7 @@ package services
 import (
 	"fmt"
 	"github.com/artemys/pprof-visualizer/internal/pkg/pprof"
+	"github.com/dustin/go-humanize"
 	"path"
 	"time"
 )
@@ -23,7 +24,6 @@ func (p *Profile) texts(node *TreeNode) (value string, self string, tooltip stri
 		self = time.Duration(node.Self).String()
 		tooltip = fmt.Sprintf("%s of %s\nself: %s", value, time.Duration(p.TotalSampling).String(), self)
 	} else {
-
 		value = humanize.IBytes(uint64(node.Value))
 		self = humanize.IBytes(uint64(node.Self))
 		tooltip = fmt.Sprintf("%s of %s\nself: %s", value, humanize.IBytes(p.TotalSampling), self)
@@ -33,4 +33,16 @@ func (p *Profile) texts(node *TreeNode) (value string, self string, tooltip stri
 		lineText = fmt.Sprintf("%s %s - %s - self: %s", node.function.Name, path.Base(node.function.File), value, self)
 	}
 	return value, self, tooltip, lineText
+}
+
+func (p *Profile) usedMemory() {
+	var text string
+	switch mode {
+	case ModeCpu:
+		text = fmt.Sprintf("%s - total sampling duration: %s - total capture duration %s", p.name, time.Duration(g.profile.TotalSampling).String(), g.profile.CaptureDuration.String())
+	case ModeHeapAlloc:
+		text = fmt.Sprintf("%s - total allocated memory: %s", tree.name, humanize.IBytes(g.profile.TotalSampling))
+	case ModeHeapInuse:
+		text = fmt.Sprintf("%s - total in-use memory: %s", tree.name, humanize.IBytes(g.profile.TotalSampling))
+	}
 }
