@@ -35,15 +35,15 @@ func (p *Profile) texts(node *TreeNode) (value string, self string, tooltip stri
 	return value, self, tooltip, lineText
 }
 
-// todo ali: add name
-func (p *Profile) usedMemory() {
+func (p *Profile) resume(name string) string {
 	var text string
 	switch p.Mode {
 	case ModeCpu:
-		text = fmt.Sprintf("%s - total sampling duration: %s - total capture duration %s", p.name, time.Duration(g.profile.TotalSampling).String(), g.profile.CaptureDuration.String())
+		text = fmt.Sprintf("%s - total sampling duration: %s - total capture duration %s", name, time.Duration(p.TotalSampling).String(), p.CaptureDuration.String())
 	case ModeHeapAlloc:
-		text = fmt.Sprintf("%s - total allocated memory: %s", tree.name, humanize.IBytes(g.profile.TotalSampling))
+		text = fmt.Sprintf("%s - total allocated memory: %s", name, humanize.IBytes(p.TotalSampling))
 	case ModeHeapInuse:
-		text = fmt.Sprintf("%s - total in-use memory: %s", tree.name, humanize.IBytes(g.profile.TotalSampling))
+		text = fmt.Sprintf("%s - total in-use memory: %s", name, humanize.IBytes(p.TotalSampling))
 	}
+	return text
 }
