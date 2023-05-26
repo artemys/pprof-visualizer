@@ -79,16 +79,12 @@
 
 <script>
     function dropHandler(ev) {
-        console.log("File(s) dropped");
-
         ev.preventDefault();
 
         if (ev.dataTransfer.items) {
             [...ev.dataTransfer.items].forEach((item, i) => {
                 if (item.kind === "file") {
                     const file = item.getAsFile();
-                    //DEBUG
-                    console.log(`… file[${i}].name = ${file.name}`);
                     let formData = new FormData();
                     formData.append('file', file);
                     getTree(formData)
@@ -119,26 +115,19 @@
                 return response.text();
             })
             .then(data => {
-                // Traitez les données de la réponse ici
-                // Traitez les données de la réponse ici
-                console.log(data);
-
                 let tree = document.getElementById("visualization")
                 tree.innerHTML = data;
-                // Binding des click post insert in DOM
                 let toggler = document.getElementsByClassName("caret");
                 console.log(toggler)
                 let i;
                 for (i = 0; i < toggler.length; i++) {
                     toggler[i].addEventListener("click", function () {
-                        console.log("coucou")
                         this.parentElement.querySelector(".nested").classList.toggle("active");
                         this.classList.toggle("caret-down");
                     });
                 }
             })
             .catch(error => {
-                // Gérez les erreurs ici
                 console.error(error);
             });
     }

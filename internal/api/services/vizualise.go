@@ -28,16 +28,17 @@ func (p *Profile) texts(node *TreeNode) (value string, self string, tooltip stri
 		self = humanize.IBytes(uint64(node.Self))
 		tooltip = fmt.Sprintf("%s of %s\nself: %s", value, humanize.IBytes(p.TotalSampling), self)
 	}
-	lineText = fmt.Sprintf("%s %s:%d - %s - self: %s", node.function.Name, path.Base(node.function.File), node.function.LineNumber, value, self)
+	lineText = fmt.Sprintf("%s %s:%d - %s - self: %s", node.Function.Name, path.Base(node.Function.File), node.Function.LineNumber, value, self)
 	if p.aggregateByFunction {
-		lineText = fmt.Sprintf("%s %s - %s - self: %s", node.function.Name, path.Base(node.function.File), value, self)
+		lineText = fmt.Sprintf("%s %s - %s - self: %s", node.Function.Name, path.Base(node.Function.File), value, self)
 	}
 	return value, self, tooltip, lineText
 }
 
+// todo ali: add name
 func (p *Profile) usedMemory() {
 	var text string
-	switch mode {
+	switch p.Mode {
 	case ModeCpu:
 		text = fmt.Sprintf("%s - total sampling duration: %s - total capture duration %s", p.name, time.Duration(g.profile.TotalSampling).String(), g.profile.CaptureDuration.String())
 	case ModeHeapAlloc:

@@ -7,15 +7,13 @@ import (
 	"time"
 )
 
-type sampleMode string
-
 var (
 	// use this when you don't really know the mode
 	// to use to read the profile.
-	ModeDefault   sampleMode = ""
-	ModeCpu       sampleMode = "cpu"
-	ModeHeapAlloc sampleMode = "heap-alloc"
-	ModeHeapInuse sampleMode = "heap-inuse"
+	ModeDefault   string = ""
+	ModeCpu       string = "cpu"
+	ModeHeapAlloc string = "heap-alloc"
+	ModeHeapInuse string = "heap-inuse"
 )
 
 type Profile struct {
@@ -25,6 +23,7 @@ type Profile struct {
 
 	// "cpu" or "heap"
 	Type string
+	Mode string
 
 	functionsMapByLocation ManyFunctionsMap
 	locationsMap           LocationsMap
@@ -32,7 +31,7 @@ type Profile struct {
 	aggregateByFunction    bool
 }
 
-func NewProfile(p *pprof.Profile, mode sampleMode) (*Profile, error) {
+func NewProfile(p *pprof.Profile, mode string) (*Profile, error) {
 	// start by building some maps because everything
 	// is indexed in various maps.
 	// ----------------------
@@ -72,7 +71,7 @@ func ReadProfileType(p *pprof.Profile) string {
 }
 
 func readProfile(p *pprof.Profile, stringsMap StringsMap, functionsMapByLocation ManyFunctionsMap,
-	locationsMap LocationsMap, mode sampleMode) *Profile {
+	locationsMap LocationsMap, mode string) *Profile {
 
 	var samples Samples
 	var idx int
