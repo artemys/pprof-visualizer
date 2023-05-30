@@ -87,6 +87,7 @@
                     const file = item.getAsFile();
                     let formData = new FormData();
                     formData.append('file', file);
+                    formData.append('file', file.name);
                     getTree(formData)
                 }
             });
@@ -118,7 +119,6 @@
                 let tree = document.getElementById("visualization")
                 tree.innerHTML = data;
                 let toggler = document.getElementsByClassName("caret");
-                console.log(toggler)
                 let i;
                 for (i = 0; i < toggler.length; i++) {
                     toggler[i].addEventListener("click", function () {

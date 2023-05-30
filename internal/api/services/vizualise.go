@@ -35,15 +35,15 @@ func (p *Profile) texts(node *TreeNode) (value string, self string, tooltip stri
 	return value, self, tooltip, lineText
 }
 
-func (p *Profile) resume(name string) string {
-	var text string
-	switch p.Mode {
+func (p *Profile) SetResume(name string) {
+	switch p.Type {
 	case ModeCpu:
-		text = fmt.Sprintf("%s - total sampling duration: %s - total capture duration %s", name, time.Duration(p.TotalSampling).String(), p.CaptureDuration.String())
+		p.resume = fmt.Sprintf("%s - total sampling duration: %s - total capture duration %s", name, time.Duration(p.TotalSampling).String(), p.CaptureDuration.String())
 	case ModeHeapAlloc:
-		text = fmt.Sprintf("%s - total allocated memory: %s", name, humanize.IBytes(p.TotalSampling))
+		p.resume = fmt.Sprintf("%s - total allocated memory: %s", p., humanize.IBytes(p.TotalSampling))
 	case ModeHeapInuse:
-		text = fmt.Sprintf("%s - total in-use memory: %s", name, humanize.IBytes(p.TotalSampling))
+		p.resume = fmt.Sprintf("%s - total in-use memory: %s", name, humanize.IBytes(p.TotalSampling))
+	default:
+		p.resume = "fail"
 	}
-	return text
 }
