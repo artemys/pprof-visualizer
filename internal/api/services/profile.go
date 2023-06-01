@@ -30,7 +30,7 @@ type Profile struct {
 	stringsMap             StringsMap
 	aggregateByFunction    bool
 	resume                 string
-	name                   string
+	Name                   string
 }
 
 func NewProfile(p *pprof.Profile, mode string) (*Profile, error) {
@@ -64,7 +64,7 @@ func NewProfile(p *pprof.Profile, mode string) (*Profile, error) {
 	case "space":
 		profile.Type = "heap"
 	}
-	profile.SetResume(profile.name)
+	profile.SetResume("test")
 	return profile, nil
 }
 
@@ -134,7 +134,7 @@ func readProfile(p *pprof.Profile, stringsMap StringsMap, functionsMapByLocation
 		functionsMapByLocation: functionsMapByLocation,
 		locationsMap:           locationsMap,
 		stringsMap:             stringsMap,
-		name:
+		Name:                   "test",
 	}
 }
 
