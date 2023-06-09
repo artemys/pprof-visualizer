@@ -139,10 +139,8 @@ func readProfile(p *pprof.Profile, stringsMap StringsMap, functionsMapByLocation
 }
 
 func (p *Profile) BuildTree(treeName string, aggregateByFunction bool, searchField string) *FunctionsTree {
-	// prepare the tree
 	tree := NewFunctionsTree(treeName)
 
-	// fill the tree
 	for _, s := range p.Samples {
 		node := tree.Root
 		for _, f := range s.Functions {
