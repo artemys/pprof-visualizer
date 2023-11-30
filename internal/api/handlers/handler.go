@@ -2,8 +2,8 @@ package handlers
 
 import (
 	"compress/gzip"
-	"fmt"
 	"github.com/artemys/pprof-visualizer/internal/api/services"
+	"github.com/artemys/pprof-visualizer/internal/pkg/logger"
 	"github.com/artemys/pprof-visualizer/internal/pkg/pprof"
 	"github.com/gin-gonic/gin"
 	"github.com/gogo/protobuf/proto"
@@ -52,7 +52,7 @@ func Visualize() gin.HandlerFunc {
 
 		var profile pprof.Profile
 		if err := proto.Unmarshal(data, &profile); err != nil {
-			fmt.Println("error reading file")
+			logger.Log.Error("error reading file")
 			return
 		}
 
