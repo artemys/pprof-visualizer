@@ -40,7 +40,7 @@ func (p *Profile) SetResume(name string) {
 	case ModeCpu:
 		p.resume = fmt.Sprintf("%s - total sampling duration: %s - total capture duration %s", name, time.Duration(p.TotalSampling).String(), p.CaptureDuration.String())
 	case ModeHeapAlloc:
-		p.resume = fmt.Sprintf("%s - total allocated memory: %s", p., humanize.IBytes(p.TotalSampling))
+		p.resume = fmt.Sprintf("%s - total allocated memory: %s", p, humanize.IBytes(p.TotalSampling))
 	case ModeHeapInuse:
 		p.resume = fmt.Sprintf("%s - total in-use memory: %s", name, humanize.IBytes(p.TotalSampling))
 	default:

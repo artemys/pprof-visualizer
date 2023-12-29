@@ -12,10 +12,9 @@ type ApiConfig struct {
 }
 
 func LoadApiConfig() ApiConfig {
+	c := ApiConfig{Env: "dev"}
 	_ = viper.ReadInConfig()
 	viper.AutomaticEnv()
-	c := ApiConfig{}
-	c.Env = c.getMandatoryString("ENV")
 	c.Port = c.getIntWithDefault("PORT", 8080)
 
 	if len(c.errors) != 0 {
