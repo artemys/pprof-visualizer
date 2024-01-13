@@ -2,7 +2,7 @@ package services
 
 import (
 	_ "embed"
-	"fmt"
+	"github.com/artemys/pprof-visualizer/internal/pkg/logger"
 	"sort"
 	"strings"
 )
@@ -14,7 +14,7 @@ type FunctionsTree struct {
 
 func (t *FunctionsTree) sort() {
 	if t.Root == nil {
-		fmt.Println("warn: called sort() on an empty tree")
+		logger.Log.Warn("called sort() on an empty tree")
 		return
 	}
 
@@ -71,6 +71,7 @@ func (n *TreeNode) AddFunction(f Function, value, self int64, percent float64, a
 	return node
 }
 
+//nolint:unused
 func (n *TreeNode) isLeaf() bool {
 	return len(n.Children) == 0
 }
@@ -78,11 +79,12 @@ func (n *TreeNode) isLeaf() bool {
 func (n *TreeNode) filter(searchField string) bool {
 	var visible bool
 
-	if searchField == "" || n.Function.Name == "" {
+	switch {
+	case searchField == "" || n.Function.Name == "":
 		visible = true
-	} else if strings.Contains(strings.ToLower(n.Function.Name), strings.ToLower(searchField)) {
+	case strings.Contains(strings.ToLower(n.Function.Name), strings.ToLower(searchField)):
 		visible = true
-	} else if strings.Contains(strings.ToLower(n.Function.File), strings.ToLower(searchField)) {
+	case strings.Contains(strings.ToLower(n.Function.File), strings.ToLower(searchField)):
 		visible = true
 	}
 

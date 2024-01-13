@@ -1,6 +1,7 @@
 package gin
 
 import (
+	"errors"
 	"github.com/artemys/pprof-visualizer/internal/pkg/logger"
 	"net"
 	"net/http"
@@ -36,19 +37,17 @@ func Ginzap(logger *logger.Logger, timeFormat string, utc bool, alwaysLog bool) 
 			for _, e := range c.Errors.Errors() {
 				logger.Error(e)
 			}
-		} else {
-			if alwaysLog || c.Writer.Status() >= 300 {
-				logger.Info(path,
-					zap.Int("status", c.Writer.Status()),
-					zap.String("method", c.Request.Method),
-					zap.String("path", path),
-					zap.String("query", query),
-					zap.String("ip", c.ClientIP()),
-					zap.String("user-agent", c.Request.UserAgent()),
-					zap.String("time", end.Format(timeFormat)),
-					zap.Duration("latency", latency),
-				)
-			}
+		} else if alwaysLog || c.Writer.Status() >= 300 {
+			logger.Info(path,
+				zap.Int("status", c.Writer.Status()),
+				zap.String("method", c.Request.Method),
+				zap.String("path", path),
+				zap.String("query", query),
+				zap.String("ip", c.ClientIP()),
+				zap.String("user-agent", c.Request.UserAgent()),
+				zap.String("time", end.Format(timeFormat)),
+				zap.Duration("latency", latency),
+			)
 		}
 	}
 }
@@ -61,8 +60,10 @@ func RecoveryWithZap(logger *logger.Logger, stack bool) gin.HandlerFunc {
 				// condition that warrants a panic stack trace.
 				var brokenPipe bool
 				if ne, ok := err.(*net.OpError); ok {
-					if se, ok := ne.Err.(*os.SyscallError); ok {
-						if strings.Contains(strings.ToLower(se.Error()), "broken pipe") || strings.Contains(strings.ToLower(se.Error()), "connection reset by peer") {
+					var se *os.SyscallError
+					if errors.As(ne.Err, &se) {
+						if strings.Contains(strings.ToLower(se.Error()), "broken pipe") ||
+							strings.Contains(strings.ToLower(se.Error()), "connection reset by peer") {
 							brokenPipe = true
 						}
 					}
@@ -75,7 +76,7 @@ func RecoveryWithZap(logger *logger.Logger, stack bool) gin.HandlerFunc {
 						zap.String("request", string(httpRequest)),
 					)
 					// If the connection is dead, we can't write a status to it.
-					c.Error(err.(error)) // nolint: errcheck
+					c.Error(err.(error)) //nolint: errcheck,forcetypeassert
 					c.Abort()
 					return
 				}

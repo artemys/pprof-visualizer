@@ -3,3 +3,4 @@
 pprof-visualizer.iml
 go.sum
 go.mod/
+target/app

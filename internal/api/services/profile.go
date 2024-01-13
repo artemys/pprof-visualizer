@@ -2,18 +2,21 @@ package services
 
 import (
 	"fmt"
+	"github.com/artemys/pprof-visualizer/internal/pkg/logger"
 	"github.com/artemys/pprof-visualizer/internal/pkg/pprof"
+	"go.uber.org/zap"
 	"os"
 	"time"
 )
 
-var (
+const (
 	// use this when you don't really know the mode
 	// to use to read the profile.
-	ModeDefault   string = ""
-	ModeCpu       string = "cpu"
-	ModeHeapAlloc string = "heap-alloc"
-	ModeHeapInuse string = "heap-inuse"
+	ModeDefault         string = ""
+	ModeCpu, CpuKeyword string = "cpu", "cpu"
+	ModeHeapAlloc       string = "heap-alloc"
+	ModeHeapInuse       string = "heap-inuse"
+	SpaceKeyword        string = "space"
 )
 
 type Profile struct {
@@ -28,7 +31,7 @@ type Profile struct {
 	functionsMapByLocation ManyFunctionsMap
 	locationsMap           LocationsMap
 	stringsMap             StringsMap
-	aggregateByFunction    bool
+	aggregateByFunction    bool //nolint:unused
 	resume                 string
 	Name                   string
 }
@@ -45,23 +48,23 @@ func NewProfile(p *pprof.Profile, mode string) (*Profile, error) {
 	functionsMap := buildFunctionsMap(p, stringsMap)
 
 	// locations map
-	locationsMap, functionsMapByLocation := buildLocationsMap(p, stringsMap, functionsMap)
+	locationsMap, functionsMapByLocation := buildLocationsMap(p, functionsMap)
 
 	// let's now build the profile
 	// ----------------------
 
 	typ := ReadProfileType(p)
 
-	if typ != "cpu" && typ != "space" {
+	if typ != CpuKeyword && typ != SpaceKeyword {
 		return nil, fmt.Errorf("unsupported type: %s", typ)
 	}
 
 	profile := readProfile(p, stringsMap, functionsMapByLocation, locationsMap, mode)
 
 	switch typ {
-	case "cpu":
-		profile.Type = "cpu"
-	case "space":
+	case CpuKeyword:
+		profile.Type = CpuKeyword
+	case SpaceKeyword:
 		profile.Type = "heap"
 	}
 	profile.SetResume("test")
@@ -74,21 +77,22 @@ func ReadProfileType(p *pprof.Profile) string {
 
 func readProfile(p *pprof.Profile, stringsMap StringsMap, functionsMapByLocation ManyFunctionsMap,
 	locationsMap LocationsMap, mode string) *Profile {
-
 	var samples Samples
 	var idx int
 
 	switch {
 	case mode == ModeDefault:
 		fallthrough
-	case ReadProfileType(p) == "cpu" && mode == ModeCpu:
+	case ReadProfileType(p) == CpuKeyword && mode == ModeCpu:
 		idx = 1
-	case ReadProfileType(p) == "space" && mode == ModeHeapAlloc:
+	case ReadProfileType(p) == SpaceKeyword && mode == ModeHeapAlloc:
 		idx = 1
-	case ReadProfileType(p) == "space" && mode == ModeHeapInuse:
+	case ReadProfileType(p) == SpaceKeyword && mode == ModeHeapInuse:
 		idx = 3
 	default:
-		fmt.Printf("err: incompatible mode and profile type. %s & %s\n", ReadProfileType(p), mode)
+		logger.Log.Info("err: incompatible mode and profile type.",
+			zap.String("readProfileType", ReadProfileType(p)),
+			zap.String("mode", mode))
 		os.Exit(-1)
 	}
 
@@ -111,7 +115,6 @@ func readProfile(p *pprof.Profile, stringsMap StringsMap, functionsMapByLocation
 		sample.Functions[len(sample.Functions)-1] = leaf
 
 		samples = append(samples, sample)
-
 	}
 
 	// compute the total sampling time
@@ -160,7 +163,8 @@ func (p *Profile) BuildTree(treeName string, aggregateByFunction bool, searchFie
 	return tree
 }
 
-func buildLocationsMap(profile *pprof.Profile, stringsMap StringsMap, functionsMap FunctionsMap) (LocationsMap, ManyFunctionsMap) {
+func buildLocationsMap(profile *pprof.Profile,
+	functionsMap FunctionsMap) (LocationsMap, ManyFunctionsMap) {
 	rv := make(LocationsMap)
 	lrv := make(ManyFunctionsMap)
 
@@ -189,10 +193,10 @@ func buildLocationsMap(profile *pprof.Profile, stringsMap StringsMap, functionsM
 				functionsMap[line.GetFunctionId()] = f
 			}
 
-			fs := lrv[uint64(location.GetId())]
-			lrv[uint64(location.GetId())] = append(fs, f)
+			fs := lrv[location.GetId()]
+			lrv[location.GetId()] = append(fs, f)
 
-			rv[uint64(location.GetId())] = loc
+			rv[location.GetId()] = loc
 		}
 	}
 

@@ -19,5 +19,8 @@ build: deps
 		-a -installsuffix cgo \
 		-tags=jsoniter -o target/app .
 
+run:
+	go run main.go api
+
 lint:
-	golangci-lint run --exclude-use-default=true --deadline=120s
+	docker run -t --rm -v $(PWD):/app -v ~/.cache/golangci-lint/v1.53.3:/root/.cache -w /app golangci/golangci-lint:v1.53.3 golangci-lint run

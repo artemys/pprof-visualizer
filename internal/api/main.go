@@ -31,7 +31,7 @@ func New() *App {
 func (app *App) setup() {
 	config := configs.LoadApiConfig()
 	svcs := services.InitServices(config)
-	r := router.InitializeRouter(svcs, config)
+	r := router.InitializeRouter()
 	app.config = config
 	app.router = r
 	app.services = svcs
@@ -42,8 +42,9 @@ func (app *App) Run() {
 
 	// https://gin-gonic.com/docs/examples/graceful-restart-or-stop/
 	srv := &http.Server{
-		Addr:    fmt.Sprintf(":%d", app.config.Port),
-		Handler: app.router,
+		Addr:              fmt.Sprintf(":%d", app.config.Port),
+		ReadHeaderTimeout: 5 * time.Second,
+		Handler:           app.router,
 	}
 
 	go func() {

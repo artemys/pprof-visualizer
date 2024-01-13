@@ -49,6 +49,7 @@ func LevelGcpEncoding(level zapcore.Level, encoder zapcore.PrimitiveArrayEncoder
 }
 
 func convertLevel(level zapcore.Level) string {
+	//nolint:exhaustive
 	switch level {
 	case zapcore.DebugLevel:
 		return "DEBUG"
