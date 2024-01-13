@@ -12,7 +12,7 @@ type ApiConfig struct {
 }
 
 func LoadApiConfig() ApiConfig {
-	viper.SetConfigFile(".env")
+  viper.SetConfigFile(".env")
 	_ = viper.ReadInConfig()
 	viper.AutomaticEnv()
 	c := ApiConfig{}
