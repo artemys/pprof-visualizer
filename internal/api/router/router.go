@@ -31,5 +31,6 @@ func initializeRoutes(r *gin.Engine) {
 	r.NoRoute(handlers.NoRoute)
 	r.LoadHTMLGlob("**/templates/*")
 
+	//here connect pprof
 	pprof.Register(r)
 }
